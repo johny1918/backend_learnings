@@ -4,11 +4,14 @@ pub mod users;
 pub mod search;
 
 use users::Message;
+use users::UserInput;
 use functions::Output;
 use search::SearchQuery;
 
 use axum::Json;
 use axum::extract::{Path, Query};
+
+
 
 pub async fn get_items() -> Json<Message> {
     Json(Message {
@@ -22,6 +25,10 @@ pub async fn create_items() -> Json<Message> {
 
 pub async fn get_user(Path(user_id): Path<i32>) -> Json<Message> {
     Json( Message { text: format!("Welcome user id: {}", user_id) })
+}
+
+pub async fn create_user(Json(payload): Json<UserInput>) -> String {
+    format!("User {} is {} years old.", payload.username, payload.age)
 }
 
 pub async fn greet(Path(name): Path<String>) -> String {
