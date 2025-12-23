@@ -1,4 +1,4 @@
-use axum::{Json, Router, routing::get};
+use axum::{Json, Router, routing::{get}};
 use serde::Serialize;
 
 #[derive(Serialize)]
@@ -6,15 +6,20 @@ struct Message {
     text: String,
 }
 
-async fn hello_world() -> Json<Message> {
+async fn get_items() -> Json<Message> {
     Json(Message {
-        text: "Hello world!".to_string(),
+        text: "Listing items".to_string(),
     })
+}
+
+async fn create_items() -> Json<Message> {
+    Json( Message { text: "Creating an item".to_string() })
 }
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(hello_world));
+    let app = Router::new()
+                    .route("/", get(get_items).post(create_items));
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
