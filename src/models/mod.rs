@@ -1,0 +1,40 @@
+pub mod functions;
+pub mod greetings;
+pub mod users;
+pub mod search;
+
+use users::Message;
+use functions::Output;
+use search::SearchQuery;
+
+use axum::Json;
+use axum::extract::{Path, Query};
+
+pub async fn get_items() -> Json<Message> {
+    Json(Message {
+        text: "Listing items".to_string(),
+    })
+}
+
+pub async fn create_items() -> Json<Message> {
+    Json( Message { text: "Creating an item".to_string() })
+}
+
+pub async fn get_user(Path(user_id): Path<i32>) -> Json<Message> {
+    Json( Message { text: format!("Welcome user id: {}", user_id) })
+}
+
+pub async fn greet(Path(name): Path<String>) -> String {
+    format!("Hello, and welcome {}", name)
+}
+
+pub async fn square(Path(n): Path<i32>) -> Json<Output> {
+    Json(Output { result: n * 2 })
+}
+
+// Query is good when you need to filter, search, pagination and optional parameters
+pub async fn search(Query(params): Query<SearchQuery>) -> String {
+    format!(
+        "Search for '{}' with limit {}", params.term, params.limit.unwrap_or(0)
+    )
+}
