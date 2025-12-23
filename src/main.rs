@@ -23,9 +23,13 @@ async fn get_user(Path(user_id): Path<i32>) -> Json<Message> {
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
-                    .route("/", get(get_items).post(create_items))
+
+    let user_routes = Router::new()
+                    .route("/users", get(get_items).post(create_items))
                     .route("/users/{user_id}", get(get_user));
+    //Nesting users under api path.
+    let app = Router::new()
+                    .nest("/api", user_routes);
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
