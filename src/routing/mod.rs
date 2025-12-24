@@ -11,7 +11,9 @@ pub async fn router_logic() -> Result<Router, std::io::Error>{
                     .route("/users", get(get_items).post(create_items))
                     .route("/users/{user_id}", get(get_user))
                     .route("/users/create/{data}", post(create_user))
-                    .route("/users/agent", get(get_user_agent));
+                    .route("/users/agent", get(get_user_agent))
+                    .route("/users/html", get(html_page))
+                    .route("/users/resp", get(consisten_response));
 
     //Route for greetings
     let greeting_routes = Router::new()

@@ -3,6 +3,10 @@ pub mod greetings;
 pub mod users;
 pub mod search;
 
+use axum::body::Body;
+use axum::http::Response;
+use axum::http::header::CONTENT_TYPE;
+use axum::response::IntoResponse;
 use users::Message;
 use users::UserInput;
 use functions::Output;
@@ -13,6 +17,7 @@ use axum::Json;
 use axum::extract::{Path, Query};
 use axum_extra::TypedHeader;
 use axum::http::StatusCode;
+use crate::models::users::ApiResponse;
 
 
 
@@ -20,6 +25,14 @@ pub async fn get_items() -> Json<Message> {
     Json(Message {
         text: "Listing items".to_string(),
     })
+}
+
+pub async fn consisten_response() -> impl IntoResponse {
+    ApiResponse {
+        success: true,
+        data: Some("Everything worked"),
+        message: None,
+    }
 }
 
 pub async fn create_items() -> (StatusCode, Json<Message>) {
@@ -53,6 +66,13 @@ pub async fn get_user_agent(user_agent: Option<TypedHeader<UserAgent>>) -> Strin
     match user_agent {
         Some(agent) => format!("Your user agent is: {}", agent.as_str()),
         None => "No user agent provided".to_string()
-    }
-    
+    }   
+}
+
+//Manual response, useful when want full control using trait Reponse/IntoResponse
+pub async fn html_page() -> Response<Body> {
+    (StatusCode::OK,
+    [(CONTENT_TYPE, "text/html")],
+    "<h1>Hello World!</h1>",
+    ).into_response()
 }
