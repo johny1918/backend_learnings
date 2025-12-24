@@ -7,9 +7,11 @@ use users::Message;
 use users::UserInput;
 use functions::Output;
 use search::SearchQuery;
+use axum_extra::headers::UserAgent;
 
 use axum::Json;
 use axum::extract::{Path, Query};
+use axum_extra::TypedHeader;
 
 
 
@@ -44,4 +46,8 @@ pub async fn search(Query(params): Query<SearchQuery>) -> String {
     format!(
         "Search for '{}' with limit {}", params.term, params.limit.unwrap_or(0)
     )
+}
+
+pub async fn get_user_agent(TypedHeader(agent): TypedHeader<UserAgent>) -> String{
+    format!("Your user agent is: {}", agent.as_str())
 }
