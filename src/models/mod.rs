@@ -48,6 +48,10 @@ pub async fn search(Query(params): Query<SearchQuery>) -> String {
     )
 }
 
-pub async fn get_user_agent(TypedHeader(agent): TypedHeader<UserAgent>) -> String{
-    format!("Your user agent is: {}", agent.as_str())
+pub async fn get_user_agent(user_agent: Option<TypedHeader<UserAgent>>) -> String {
+    match user_agent {
+        Some(agent) => format!("Your user agent is: {}", agent.as_str()),
+        None => "No user agent provided".to_string()
+    }
+    
 }
