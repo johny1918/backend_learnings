@@ -12,6 +12,7 @@ use axum_extra::headers::UserAgent;
 use axum::Json;
 use axum::extract::{Path, Query};
 use axum_extra::TypedHeader;
+use axum::http::StatusCode;
 
 
 
@@ -21,8 +22,8 @@ pub async fn get_items() -> Json<Message> {
     })
 }
 
-pub async fn create_items() -> Json<Message> {
-    Json( Message { text: "Creating an item".to_string() })
+pub async fn create_items() -> (StatusCode, Json<Message>) {
+    (StatusCode::CREATED, Json( Message { text: "Creating an item".to_string() }))
 }
 
 pub async fn get_user(Path(user_id): Path<i32>) -> Json<Message> {
