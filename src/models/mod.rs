@@ -2,6 +2,7 @@ pub mod functions;
 pub mod greetings;
 pub mod users;
 pub mod search;
+pub mod pagination;
 
 use axum::body::Body;
 use axum::http::Response;

@@ -1,5 +1,5 @@
 use axum::Router;
-use crate::models::*;
+use crate::models::{pagination::list_items, *};
 
 use axum::routing::{get, post};
 
@@ -14,6 +14,10 @@ pub async fn router_logic() -> Result<Router, std::io::Error>{
                     .route("/users/agent", get(get_user_agent))
                     .route("/users/html", get(html_page))
                     .route("/users/resp", get(consisten_response));
+
+    // Router for response pagination
+    let pagination = Router::new()
+                    .route("/", get(list_items));
 
     //Route for greetings
     let greeting_routes = Router::new()
@@ -32,7 +36,8 @@ pub async fn router_logic() -> Result<Router, std::io::Error>{
                     .nest("/welcome", greeting_routes)
                     .nest("/api", user_routes)
                     .nest("/search", search_routes)
-                    .nest("/calculate-square", square_routes);
+                    .nest("/calculate-square", square_routes)
+                    .nest("/page", pagination);
     Ok(app)
 }
     
