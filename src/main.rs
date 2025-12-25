@@ -1,12 +1,13 @@
 mod routing;
 mod models;
+mod errors;
 
 use crate::routing::router_logic;
 
 #[tokio::main]
 async fn main() {
 
-    let app = router_logic().await.expect("Failed to get router apps");
+    let app = router_logic().expect("Failed to get routes");
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .expect("Failed to bind");

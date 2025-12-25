@@ -1,10 +1,14 @@
 use axum::Router;
+use crate::models::greetings::welcome_page;
 use crate::models::{pagination::list_items, *};
-
+use crate::errors::AppError;
 use axum::routing::{get, post};
+use tower_http::timeout::TimeoutLayer;
+use std::time::Duration;
+use axum::http::StatusCode;
 
 
-pub async fn router_logic() -> Result<Router, std::io::Error>{
+pub fn router_logic() -> Result<Router, AppError<String>>{
 
     //Route for Users
     let user_routes = Router::new()
@@ -33,11 +37,13 @@ pub async fn router_logic() -> Result<Router, std::io::Error>{
 
     //Nesting users under api path.
     let app = Router::new()
+                    .route("/", get(welcome_page))
                     .nest("/welcome", greeting_routes)
                     .nest("/api", user_routes)
                     .nest("/search", search_routes)
                     .nest("/calculate-square", square_routes)
-                    .nest("/page", pagination);
+                    .nest("/page", pagination)
+                    .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(5)));
     Ok(app)
 }
     
