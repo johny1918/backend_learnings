@@ -4,6 +4,7 @@ use crate::models::{pagination::list_items, *};
 use crate::errors::AppError;
 use axum::routing::{get, post};
 use tower_http::timeout::TimeoutLayer;
+use tower_http::trace::TraceLayer;
 use std::time::Duration;
 use axum::http::StatusCode;
 
@@ -43,7 +44,8 @@ pub fn router_logic() -> Result<Router, AppError<String>>{
                     .nest("/search", search_routes)
                     .nest("/calculate-square", square_routes)
                     .nest("/page", pagination)
-                    .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(5)));
+                    .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(5)))
+                    .layer(TraceLayer::new_for_http());
     Ok(app)
 }
     

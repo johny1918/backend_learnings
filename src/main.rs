@@ -2,11 +2,17 @@ mod routing;
 mod models;
 mod errors;
 
+use tracing_subscriber;
 use crate::routing::router_logic;
 
 #[tokio::main]
 async fn main() {
 
+    // Initialize tracing subscriber for console logging
+    tracing_subscriber::fmt()
+        .with_max_level(tracing::Level::DEBUG)
+        .init();
+    
     let app = router_logic().expect("Failed to get routes");
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
