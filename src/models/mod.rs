@@ -13,11 +13,14 @@ use users::UserInput;
 use functions::Output;
 use search::SearchQuery;
 use axum_extra::headers::UserAgent;
+use axum::extract::State;
+use std::sync::Arc;
 
 use axum::Json;
 use axum::extract::{Path, Query};
 use axum_extra::TypedHeader;
 use axum::http::StatusCode;
+use crate::models::functions::AppState;
 use crate::models::users::ApiResponse;
 
 
@@ -29,6 +32,7 @@ pub async fn get_items() -> Json<Message> {
 }
 
 pub async fn consisten_response() -> impl IntoResponse {
+
     ApiResponse {
         success: true,
         data: Some("Everything worked"),

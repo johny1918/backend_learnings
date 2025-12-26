@@ -2,8 +2,10 @@ mod routing;
 mod models;
 mod errors;
 
+use std::sync::Arc;
+
 use tracing_subscriber;
-use crate::routing::router_logic;
+use crate::{models::functions::AppState, routing::router_logic};
 
 #[tokio::main]
 async fn main() {
@@ -12,8 +14,10 @@ async fn main() {
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::DEBUG)
         .init();
+
+    let state = Arc::new(AppState{app_name: "My Axum App".to_string()});
     
-    let app = router_logic().expect("Failed to get routes");
+    let app = router_logic(state).expect("Failed to get routes");
     let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
         .await
         .expect("Failed to bind");
