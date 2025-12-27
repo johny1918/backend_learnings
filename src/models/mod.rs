@@ -52,8 +52,10 @@ pub async fn create_user(Json(payload): Json<UserInput>) -> String {
     format!("User {} is {} years old.", payload.username, payload.age)
 }
 
-pub async fn greet(Path(name): Path<String>) -> String {
-    format!("Hello, and welcome {}", name)
+pub async fn greet(State(state): State<Arc<AppState>>, Path(name): Path<String>) -> String {
+    let mut num = state.counter.lock().unwrap();
+    *num +=1;
+    format!("Hello, and welcome {}, Counter: {}", name, *num)
 }
 
 pub async fn square(Path(n): Path<i32>) -> Json<Output> {
