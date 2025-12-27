@@ -15,6 +15,7 @@ use search::SearchQuery;
 use axum_extra::headers::UserAgent;
 use axum::extract::State;
 use std::sync::Arc;
+use crate::errors::ResponseErrors;
 
 use axum::Json;
 use axum::extract::{Path, Query};
@@ -44,8 +45,11 @@ pub async fn create_items() -> (StatusCode, Json<Message>) {
     (StatusCode::CREATED, Json( Message { text: "Creating an item".to_string() }))
 }
 
-pub async fn get_user(Path(user_id): Path<i32>) -> Json<Message> {
-    Json( Message { text: format!("Welcome user id: {}", user_id) })
+pub async fn get_user(Path(user_id): Path<i32>) -> Result<Json<Message>, ResponseErrors> {
+    if user_id > 10 {
+        return Err(ResponseErrors::Internal("Id not found".into()));
+    }
+    Ok(Json( Message { text: format!("Welcome user id: {}", user_id) }))
 }
 
 pub async fn create_user(Json(payload): Json<UserInput>) -> String {
