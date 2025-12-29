@@ -1,8 +1,11 @@
+pub mod products;
+
 use axum::Router;
 use crate::models::functions::AppState;
 use crate::models::greetings::welcome_page;
 use crate::models::{pagination::list_items, *};
 use crate::errors::AppError;
+use crate::routing::products::product_routes;
 use axum::routing::{get, post};
 use tower_http::timeout::TimeoutLayer;
 use tower_http::trace::TraceLayer;
@@ -21,6 +24,8 @@ pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
                     .route("/users/agent", get(get_user_agent))
                     .route("/users/html", get(html_page))
                     .route("/users/resp", get(consisten_response));
+    
+
 
     // Router for response pagination
     let pagination = Router::new()
@@ -38,6 +43,8 @@ pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
     let search_routes = Router::new()
     .route("/", get(search));
 
+
+
     //Nesting users under api path.
     let app = Router::new()
                     .route("/", get(welcome_page))
@@ -46,6 +53,7 @@ pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
                     .nest("/search", search_routes)
                     .nest("/calculate-square", square_routes)
                     .nest("/page", pagination)
+                    .nest("/shop", product_routes())
                     .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(5)))
                     .layer(TraceLayer::new_for_http())
                     .with_state(state);

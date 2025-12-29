@@ -2,6 +2,7 @@ mod routing;
 mod models;
 mod errors;
 mod config;
+mod services;
 
 use std::sync::{Arc, Mutex};
 
@@ -25,6 +26,7 @@ async fn main() {
     let state = Arc::new(AppState{ 
         app_name: "My Axum App".to_string(),
         counter: routes_counter.clone(),
+        app_version: "v1.0".to_string(),
 });
     
     let app = router_logic(state).expect("Failed to get routes");

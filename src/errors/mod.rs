@@ -9,7 +9,7 @@ pub struct AppError <T> {
     pub details: Option<T>,
 }
 
-#[derive(Debug)]
+
 pub enum ResponseErrors {
     NotFound(String),
     BadRequest(String),
