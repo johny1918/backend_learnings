@@ -1,14 +1,20 @@
 mod routing;
 mod models;
 mod errors;
+mod config;
 
 use std::sync::{Arc, Mutex};
 
 use tracing_subscriber;
-use crate::{models::functions::AppState, routing::router_logic};
+use crate::{models::{config::AppConfig, functions::AppState}, routing::router_logic};
 
 #[tokio::main]
 async fn main() {
+    
+    //Load environment variables from .env(if present)
+    dotenvy::dotenv().ok();
+    let config = AppConfig::from_env();
+
 
     // Initialize tracing subscriber for console logging
     tracing_subscriber::fmt()
@@ -22,7 +28,7 @@ async fn main() {
 });
     
     let app = router_logic(state).expect("Failed to get routes");
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
+    let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", &config.port))
         .await
         .expect("Failed to bind");
     println!("Server running at http://{}", listener.local_addr().unwrap());
