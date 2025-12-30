@@ -1,30 +1,31 @@
-use serde::Serialize;
-use axum::Json;
+use serde::{Deserialize};
+use axum::{Json, extract::Query};
 
-#[derive(Serialize)]
-pub struct Pagination<T> {
-    pub items: Vec<T>,
-    pub total: u64,
-    pub page: u32,
-    pub per_page: u32,
+use crate::{errors::ResponseErrors, models::products::ProductOutput};
+
+#[derive(Deserialize)]
+pub struct Pagination {
+    pub page: Option<u32>,
+    pub per_page: Option<u32>,
 }
 
-#[derive(Serialize)]
-pub struct Item {
-    pub id: u32,
-    pub name: String,
+//Apply pagination in DTO
+impl Pagination {
+    pub fn normalize(self) -> (u32, u32) {
+        let page = self.page.unwrap_or(1).max(1);
+        let per_page = self.per_page.unwrap_or(20).clamp(1, 100);
+        (page, per_page)
+    }
 }
 
-pub async fn list_items() -> Json<Pagination<Item>> {
-    Json(
-        Pagination {
-            items: vec![
-                Item { id: 1, name: "Book".to_string()},
-                Item { id: 2, name: "Pen".to_string()},
-            ],
-            total: 42,
-            page: 1,
-            per_page: 10,
-        }
-    )
+//Apply pagination in Handler
+pub async fn list_items(Query(params): Query<Pagination>) 
+-> Result<Json<String>, ResponseErrors> {
+    let (page, per_page) = params.normalize();
+    
+    //fetch data from core function based on page, per_page
+
+    Ok(Json("Your data".to_string()))
 }
+
+// Apply pagination in SQLx based on page,per_page.
