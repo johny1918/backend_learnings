@@ -5,6 +5,7 @@ pub mod search;
 pub mod pagination;
 pub mod config;
 pub mod products;
+pub mod sorting;
 
 use axum::body::Body;
 use axum::http::Response;
