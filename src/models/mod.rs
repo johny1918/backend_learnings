@@ -13,6 +13,9 @@ use axum::body::Body;
 use axum::http::Response;
 use axum::http::header::CONTENT_TYPE;
 use axum::response::IntoResponse;
+use jsonwebtoken::DecodingKey;
+use jsonwebtoken::Validation;
+use jsonwebtoken::decode;
 use users::Message;
 use users::UserInput;
 use functions::Output;
@@ -111,4 +114,15 @@ pub fn create_jwt(user_id: String, role: String, secret: &str) -> String {
            &claims, 
            &EncodingKey::from_secret(secret.as_ref())
     ).expect("Failed to encode JWT")
+}
+
+pub fn validate_jwt(token: &str, secret: &str) -> Result<Claims, ResponseErrors> {
+    let validation = Validation::default();
+    let token_data = decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret.as_ref()),
+        &validation,)
+        .map_err(|_| ResponseErrors::BadRequest("Failed to validate jwt".to_string()))?;
+    
+    Ok(token_data.claims)
 }
