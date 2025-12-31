@@ -1,6 +1,7 @@
 use axum::{Json, http::{StatusCode}, response::IntoResponse};
 use serde::Serialize;
 use axum::response::Response;
+use thiserror::Error;
 
 
 #[derive(Serialize, Debug)]
@@ -10,9 +11,15 @@ pub struct AppError <T> {
 }
 
 
+// thiserror define application custom errors
+
+#[derive(Error, Debug)]
 pub enum ResponseErrors {
+    #[error("Resource not found: {0}")]
     NotFound(String),
+    #[error("Invalid input: {0}")]
     BadRequest(String),
+    #[error("Unexpected server error: {0}")]
     Internal(String),
 }
 
