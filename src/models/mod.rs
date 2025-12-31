@@ -7,6 +7,7 @@ pub mod config;
 pub mod products;
 pub mod sorting;
 pub mod filter;
+pub mod jwt;
 
 use axum::body::Body;
 use axum::http::Response;
@@ -20,6 +21,7 @@ use axum_extra::headers::UserAgent;
 use axum::extract::State;
 use std::sync::Arc;
 use crate::errors::ResponseErrors;
+use crate::models::jwt::Claims;
 
 use axum::Json;
 use axum::extract::{Path, Query};
@@ -27,6 +29,8 @@ use axum_extra::TypedHeader;
 use axum::http::StatusCode;
 use crate::database::AppState;
 use crate::models::users::ApiResponse;
+use jsonwebtoken::{encode, Header, EncodingKey};
+use time::{OffsetDateTime, Duration};
 
 
 
@@ -90,4 +94,21 @@ pub async fn html_page() -> Response<Body> {
     [(CONTENT_TYPE, "text/html")],
     "<h1>Hello World!</h1>",
     ).into_response()
+}
+
+pub fn create_jwt(user_id: String, role: String, secret: &str) -> String {
+    let now = OffsetDateTime::now_utc();
+    let exp = now + Duration::hours(1);
+
+    let claims = Claims {
+        sub: user_id,
+        role,
+        iat: now.unix_timestamp() as usize,
+        exp: exp.unix_timestamp() as usize,
+    };
+
+    encode(&Header::default(), 
+           &claims, 
+           &EncodingKey::from_secret(secret.as_ref())
+    ).expect("Failed to encode JWT")
 }

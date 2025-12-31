@@ -1,5 +1,6 @@
 use sqlx::{PgPool, postgres::PgPoolOptions};
 use std::sync::{Mutex,Arc};
+use crate::{errors::ResponseErrors, models::users::UserCredentials};
 
 
 
@@ -9,6 +10,20 @@ pub struct AppState {
     pub app_name: String,
     pub counter: Arc<Mutex<u32>>,
     pub app_version: String,
+}
+
+impl AppState {
+    pub async fn validate_credentials(&self, input: UserCredentials) 
+        -> Result<UserCredentials, ResponseErrors> {
+        if !(input.username.contains("admin") && input.password.contains("admin")) {
+            return Err(ResponseErrors::BadRequest("Wrong username or password".to_string()));
+        }
+        Ok(UserCredentials { 
+            username: input.username,
+            role: crate::models::users::Roles::Admin,
+            password: input.password 
+        })
+    }
 }
 
 pub async fn create_pool(database_url: &str) -> PgPool {

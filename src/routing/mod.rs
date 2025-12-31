@@ -12,6 +12,7 @@ use tower_http::trace::TraceLayer;
 use std::sync::Arc;
 use std::time::Duration;
 use axum::http::StatusCode;
+use crate::models::users::login;
 
 
 pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
@@ -25,6 +26,7 @@ pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
                     .route("/users/html", get(html_page))
                     .route("/users/resp", get(consisten_response));
     
+    let users_login = Router::new().route("/", post(login));
 
 
     // Router for response pagination
@@ -54,6 +56,7 @@ pub fn router_logic(state: Arc<AppState>) -> Result<Router, AppError<String>>{
                     .nest("/calculate-square", square_routes)
                     .nest("/page", pagination)
                     .nest("/shop", product_routes())
+                    .nest("/login", users_login)
                     .layer(TimeoutLayer::with_status_code(StatusCode::REQUEST_TIMEOUT, Duration::from_secs(5)))
                     .layer(TraceLayer::new_for_http())
                     .with_state(state);

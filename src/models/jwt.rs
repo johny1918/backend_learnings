@@ -1,0 +1,9 @@
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String,    // subject (user id)
+    pub exp: usize,     // expiration timestamp
+    pub iat: usize,     // issued at timestamp
+    pub role: String,   // user role
+}
