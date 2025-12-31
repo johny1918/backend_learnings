@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use axum::{Json, extract::State};
-use crate::{errors::AppError, models::{functions::AppState, products::*}};
+use crate::{errors::AppError, models::products::*};
+use crate::database::AppState;
 
 pub async fn create_product(State(state): State<Arc<AppState>>,
 Json(input): Json<CreateProductInput>) 

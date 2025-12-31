@@ -1,7 +1,7 @@
 pub mod products;
 
 use axum::Router;
-use crate::models::functions::AppState;
+use crate::database::AppState;
 use crate::models::greetings::welcome_page;
 use crate::models::{pagination::list_items, *};
 use crate::errors::AppError;

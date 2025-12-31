@@ -26,6 +26,8 @@ async fn main() {
 
     let routes_counter = Arc::new(Mutex::new(0));
     let db_pool = create_pool(&config.database_url).await;
+    //run migration before starting the app
+    //run_migration(&db_pool).await.expect("Failed to run database migration");
     let state = Arc::new(AppState{ 
         db: db_pool,
         app_name: "My Axum App".to_string(),

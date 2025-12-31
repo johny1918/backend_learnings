@@ -25,7 +25,7 @@ use axum::Json;
 use axum::extract::{Path, Query};
 use axum_extra::TypedHeader;
 use axum::http::StatusCode;
-use crate::models::functions::AppState;
+use crate::database::AppState;
 use crate::models::users::ApiResponse;
 
 

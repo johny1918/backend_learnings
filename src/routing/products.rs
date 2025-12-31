@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
 use axum::{Router, routing::{get, post}};
-use crate::{models::functions::AppState, services::products::*};
+use crate::services::products::*;
+use crate::database::AppState;
 
 pub fn product_routes() -> Router<Arc<AppState>> {
     Router::new()
