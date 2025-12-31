@@ -3,11 +3,13 @@ mod models;
 mod errors;
 mod config;
 mod services;
+mod database;
 
 use std::sync::{Arc, Mutex};
 
 use tracing_subscriber;
-use crate::{models::{config::AppConfig, functions::AppState}, routing::router_logic};
+use crate::{models::{config::AppConfig}, routing::router_logic};
+use crate::database::*;
 
 #[tokio::main]
 async fn main() {
@@ -23,7 +25,9 @@ async fn main() {
         .init();
 
     let routes_counter = Arc::new(Mutex::new(0));
+    let db_pool = create_pool(&config.database_url).await;
     let state = Arc::new(AppState{ 
+        db: db_pool,
         app_name: "My Axum App".to_string(),
         counter: routes_counter.clone(),
         app_version: "v1.0".to_string(),
