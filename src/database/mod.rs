@@ -1,4 +1,4 @@
-use sqlx::PgPool;
+use sqlx::{PgPool, postgres::PgPoolOptions};
 use std::sync::{Mutex,Arc};
 
 
@@ -12,7 +12,11 @@ pub struct AppState {
 }
 
 pub async fn create_pool(database_url: &str) -> PgPool {
-    PgPool::connect(database_url)
+    PgPoolOptions::new()
+    .max_connections(20) // max numbers of active connections to pool
+    .min_connections(5) // the pool will try to maintain this idle connection count
+    .idle_timeout(Some(std::time::Duration::from_secs(300))) // how long idle connections stay open before closed
+    .connect(database_url)
     .await
-    .expect("Failed to create Postgres pool")
+    .expect("Failed to connect to database")
 }
